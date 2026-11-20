@@ -25,7 +25,20 @@ jobs:
           # Text updates (pages, sitemap) are applied on top of the base site
           if [ -f site-update.tar.xz ]; then tar -xJf site-update.tar.xz -C public; fi
           touch public/.nojekyll
-          ls public
+      - name: Make WebP images
+        run: |
+          pip install --quiet pillow
+          python3 - <<'PY'
+          import glob
+          from PIL import Image
+          for f in glob.glob("public/assets/img/*.jpg"):
+              im = Image.open(f).convert("RGB")
+              im.save(f[:-4] + ".webp", "WEBP", quality=76, method=6)
+              if f.endswith("hero.jpg"):
+                  s = im.copy(); s.thumbnail((800, 1067)); s.save(f[:-4] + "-800.webp", "WEBP", quality=76, method=6)
+          print("webp done")
+          PY
+          ls public/assets/img
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
