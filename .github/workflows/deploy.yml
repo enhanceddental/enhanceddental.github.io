@@ -22,6 +22,8 @@ jobs:
         run: |
           mkdir -p public
           unzip -q enhanced-dental-site-github.zip -d public
+          # Text updates (pages, sitemap) are applied on top of the base site
+          if [ -f site-update.tar.xz ]; then tar -xJf site-update.tar.xz -C public; fi
           touch public/.nojekyll
           ls public
       - uses: actions/configure-pages@v5
