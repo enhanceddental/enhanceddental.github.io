@@ -22,8 +22,9 @@ jobs:
         run: |
           mkdir -p public
           unzip -q enhanced-dental-site-github.zip -d public
-          # Text updates (pages, sitemap) are applied on top of the base site
+          # Text updates are applied on top of the base site, oldest first
           if [ -f site-update.tar.xz ]; then tar -xJf site-update.tar.xz -C public; fi
+          for f in $(ls updates/*.tar.xz 2>/dev/null | sort); do echo "applying $f"; tar -xJf "$f" -C public; done
           touch public/.nojekyll
       - name: Make WebP images
         run: |
@@ -38,7 +39,6 @@ jobs:
                   s = im.copy(); s.thumbnail((800, 1067)); s.save(f[:-4] + "-800.webp", "WEBP", quality=76, method=6)
           print("webp done")
           PY
-          ls public/assets/img
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
