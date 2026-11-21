@@ -25,6 +25,8 @@ jobs:
           # Text updates are applied on top of the base site, oldest first
           if [ -f site-update.tar.xz ]; then tar -xJf site-update.tar.xz -C public; fi
           for f in $(ls updates/*.tar.xz 2>/dev/null | sort); do echo "applying $f"; tar -xJf "$f" -C public; done
+          # Small idempotent patch scripts, oldest first
+          for f in $(ls updates/*.py 2>/dev/null | sort); do echo "running $f"; python3 "$f" public; done
           touch public/.nojekyll
       - name: Make WebP images
         run: |
